@@ -28,8 +28,10 @@ web:
     name: crapi-web
     labels:
       app: crapi-web
-    nodePort: 30080
-    sslNodePort: 30443
+    type: LoadBalancer  # Expose externally
+    port: 80           # External port
+    nodePort: 30080    # Ignored for LoadBalancer, but kept
+    sslNodePort: 30443 # Ignored for LoadBalancer, but kept
   config:
     name: crapi-web-configmap
     labels:
@@ -151,7 +153,9 @@ mailhog:
     name: mailhog-web
     labels:
       app: mailhog
-    nodePort: 30025
+    type: LoadBalancer  # Expose web UI externally
+    port: 8025         # External port for web UI
+    nodePort: 30025    # Ignored for LoadBalancer, but kept
   config:
     name: mailhog-configmap
     labels:
@@ -199,6 +203,7 @@ mongodb:
     type: "default"
     pvc:
       name: mongodb-pv-claim
+      storageClassName: gp2
       labels:
         app: mongodb
       resources:
@@ -243,6 +248,7 @@ postgresdb:
     type: "default"
     pvc:
       name: postgres-pv-claim
+      storageClassName: gp2
       labels:
         app: postgresdb
       resources:
@@ -266,6 +272,8 @@ apiGatewayService:
     name: "gateway-service"
     labels:
       app: gateway-service
+    type: LoadBalancer  # Expose API gateway externally
+    port: 443          # External port (HTTPS)
   config:
     name: gateway-service
     labels:
